@@ -1,27 +1,18 @@
-// var express = require('express');
-// var path = require('path');
-// var open = require('open');
-// var port = 3000;
-// var app = express();
+// distServer file - used to run sample prod dist
 
-import express from 'express';
+import express from 'express'; // web server
 import path from 'path';
 import open from 'open';
-
-import webpack from 'webpack';
-import config from '../webpack.config.dev';
+import compression from 'compression'; // gzip compression
 
 const port = 3000;
 const app = express();
-const compiler = webpack(config);
 
-app.use(require('webpack-dev-middleware')(compiler, {
-  noInfo:true,
-  publicPath: config.output.publicPath
-}));
+app.use(compression());
+app.use(express.static('dist'));
 
 app.get('/', function(req, res) {
-  res.sendFile(path.join(__dirname, '../src/index.html'));
+  res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
 
 // allow console statements in this script
