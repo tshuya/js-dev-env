@@ -1,6 +1,10 @@
 // webpack css loader allows following statment to work
 import './index.css';
 import numeral from 'numeral';
+
+import {getUsers, deleteUser} from './api/userApi';  // load our api code
+import { link } from 'fs';
+
 const courseValue = numeral(1000).format('0.0.00');
 
 // debugger;  // uncomment, to stop script in chrome debugger
@@ -10,9 +14,7 @@ console.log(`I would like to pay ${courseValue} for this course.` ); // eslint-d
 //         handle substituion vars.
 
 // ------------ Example API call section -------------
-import {getUsers, deleteUser} from './api/userApi';  // load our api code
-//import {deleteUser} from './api/userApi';  // load our api code
-import { link } from 'fs';
+
 
 // populate the html table with user via API call.
 getUsers().then(result => {

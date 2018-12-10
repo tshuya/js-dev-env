@@ -17,6 +17,9 @@ export default {
       noInfo: true
     })
   ],
+  node: {
+    fs: 'empty'
+  },
   module: {
     rules: [
       { test: /\.js$/, exclude: /node_modules/, loaders: ['babel-loader'] },
