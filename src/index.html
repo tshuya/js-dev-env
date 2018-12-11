@@ -1,6 +1,26 @@
+<!--
+NOTE:  This is a template for index.html.
+it uses ejs (embeded js) and htmlWebpackPlugin to generate a different index.html for each environment.
+htmlWebpackPlugin will dynamically add references to the scripts and styles that it bundles
+to this file.  The generated bundles (chunks) have hash-based filenames,
+so it is neccesary to add the references dynamically.
+For more info about ejs visit  http://www.embeddedjs.com
+For examples of using it with htmlWebpackPlugin, see
+https://github.com/jaketrent/html-webpack-template/blob/master/index.ejs
+
+-->
+
 <!doctype=<!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- special code section that appears only if trackJStoken appears in webpack.config.prod.js -->
+  <!--   webpack will also replace the variable trackJSToken with the value stored in webpack.config -->
+  <% if (htmlWebpackPlugin.options.trackJSToken) { %> 
+  <!-- BEGIN TRACKJS ERROR LOGGING SNIPPET -->
+  <script type="text/javascript">window._trackJs = {token: '<%=htmlWebPackPlugin.options.trackJSToken%>'};</script>
+  <script type="text/javascript" src="https://cdn.trackjs.com/releases/current/tracker.js"></script>
+  <!-- END TRACKJS -->
+  <% } %>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -23,7 +43,7 @@
     </tbody>
   </table>
 
-
-  <script src="bundle.js"></script>
+  <!-- webpack will auto inject this so remove it from here-->
+  <!----script src="bundle.js"></script>  -->
 </body>
 </html>
