@@ -1,0 +1,1884 @@
+javascript starter kit  (checklist)
+
+pluralsight presentation  Nov 24, 2018
+
+Need a starter kit to jump start project startup and provide
+  consistency in development and standards, and reduce the decisions
+  you need to make on each project.  Doing the right thing is easy.
+  So many steps involved, easy to overlook a step. (codifies lessons learned)
+
+Book - The Checklist Manifesto - how to get things right - Atul Gawande
+
+Package Managers  (modulecounts.com)
+--------------------
+npm - node/javascript  (most popular)
+Maven central (java)
+CPAN (R)
+nuget (.NET)
+Packagist (PHP)
+PyPL (Python)
+
+Javascript Targets
+  Webpages (React)
+  Servers (Nodejs)
+  phone (React, phonegap, NativeScript)
+  desktop (NWjs, Elektron)
+
+Landscape of range of choices
+   React, NodeJS, Angular  - pick best of tools
+   Ember - baked in, no choice
+
+set up your starter kit/boiler plate in git
+--------------------------------------------
+1) Install Git  (git-svn.com), follow default values
+2) Sign up for free account at github.com
+3) create a git repos on github (+ sign at top right of page)
+       named:  owner / repos name
+       tshuya/js-dev-env
+       [x] public
+       [x] initialize with README 
+       add .gitignore (Node)  - Tells git to ignore the huge node module folder
+                which you don't want to check in.
+4) Clone the repo to your local workstation (click the green clone button)
+    copy the url that it provides ...
+
+    open  command prompt for git, ...
+    cd c:/users/terry/dev
+    git clone https://github.com/tshuya/js-dev-env.git
+
+5) prepare your files perform the following git commands
+
+   git status   // shows you the status of all new/modified files in local folder
+   git add .    // stage all your files (get ready to update repo)
+                // will traverse any new subfolders you have created too
+   git commit -m "added files"  // commit changes locally
+   git push     // push your staged files to the main repo on GitHub
+                // May have to supply login email and password for github when prompted.
+
+            $ git push
+            Fatal: HttpRequestException encountered.
+              An error occurred while sending the request.
+            Username for 'https://github.com': tshuya@hotmail.com
+            Password for 'https://tshuya@hotmail.com@github.com': N3wSk1lls
+
+Note:  if you want to discard all your local changes, and reload from repo
+  git checkout
+
+  //to see who made the latest changes to a file use git blame 
+
+  git blame filename           // show who made changes (commits) to this file.
+  git blame filename -L 0,10   // only changes to the file between lines 0 and 10
+
+6) Traditional way to use git on a project using standard git flows.
+   Git branching model include branches like master, dev, release and features.
+   (see http://nvie.com/posts/a-successful-git-branching-model)
+
+    Clone the repo to your local workstation (click the green clone button)
+    copy the url that it provides ...
+
+    open  command prompt for git, ...
+    cd c:/users/terry/dev
+    git clone https://github.com/tshuya/js-dev-env.git
+
+    // to create a new local feature branch
+    git branch     // shows you what branch you are currently using (initally master)
+    git branch -r  // shows remote branches (on github server)
+
+    // to create a dev branch if it does not exist yet (on established projects it should exist)
+    git checkout master    // set your system to point to the master branch
+    git branch -b dev      // make the new branch from the master, and switch to the dev branch 
+    git push -u origin dev  // push the branch to the remote repo
+    // other people would need to do the following to see the new dev branch
+    git remote update
+    git branch -r       // will show the remote branches like master and dev
+    git checkout dev    // switch to start using the dev branch
+
+    // to create a local feature branch to do your code changes in...
+    git checkout -b my-new-feature-branch dev   // create a new feature branch of of the develop
+                                            // branch in order to isolate your project changes
+    
+        // alternatively if you need to work on another branch to merge things ...
+        git checkout dev   // use this to switch to a different existing branch to make changes
+        git checkout master  // connects the the main branch
+
+    // AT THIS POINT YOU CAN MAKE CHANGES TO YOUR LOCAL SOURCE CODE
+
+    git status   // shows you the status of all new/modified files in local folder
+    git add .    // stage all your files (get ready to update repo)
+                  // will traverse any new subfolders you have created too
+    git commit -m "added files"  // commit changes locally
+    git push     // push your staged files to the feature branch on the repo on GitHub
+
+        // note: might have to perform the following to tell git where the feature branch is
+        git push --set-upstream origin final_chapters
+
+        // Note: in a regular dev enviornment you might need to make a Pull request on the
+        // github site to ask your project team lead to do the git push.
+        // The team lead will review the code and return it back to you if any changes are required.
+
+    // MERGE YOUR FEATURE BRANCH CHANGES BACK INTO THE DEV BRANCH (when done devlopment)
+
+    git checkout dev
+    git merge --no-ff my-new-feature-branch    
+           // the --no-ff causes merge to always create a new commit even if a forward fit could be used
+    git branch -d my-new-feature-branch   // delete your temporary feature branch
+    git push origin dev     // perform the actual merge to dev
+
+    // CREATE A RELEASE BRANCH TO PREPARE TO DEPLOY CODE TO PROD WITH CANDIDATE CODE
+
+    git checkout -b release-1.2 dev
+       // modify any config files in the project that indicate the new release number at this point
+       // make any final clean up changes
+    git commit -a -m "bumped version number to 1.2"
+
+    // FINALLY, WHEN THE RELEASE OCCURS, MERGE THE RELEASE BRANCH BACK INTO THE MASTER BRANCH
+
+    git checkout master
+    git merge --no-ff release-1.2
+    git tag -a 1.2    // tag all the object changed with an identifier so we can search for them later
+                      // optiionally use -s or -u <key> to sign tags cryptographically.
+    git push origin master
+    
+    // also need to make sure the dev branch is in sych with the master branch
+    git checkout dev
+    git merge --no-ff release-1.2     
+        // NOTE: this will lead to a merge conflict with the verions number changes made
+        // in the config files, that needs to be resolved before finally ...
+
+    git branch -d release-1.2   // cleanup this branch after the merge conflicts are resolved.
+
+
+Topic Areas:
+----------------------
+Editors and Config
+Package Management
+Dev Webserver
+Automation
+Transpiling
+Bundling
+Linting
+HTTP 
+Tesing and Continous Integration (CI)
+Project Structure
+Production Builds
+Automated Deploys
+
+
+=======================================================
+Editors and Config
+------------------------
+best editor should have (es16 support, autocomplete, report unused imports, auto refactoring)
+must have a built in terminal, linting errors, code status ...
+
+Javascript Editors (front end - free)
+  Atom **
+  Brackets *
+  VSCode - ***
+Eclipse / Netbeans - Java support mainly.(backend)
+
+Others:
+AppCode, Coda, CodeBlocks, Emacs, gedit, jEdit,
+Komodo, Notepad++, phpStorm, pyCharm, subline Text
+Textmate, Vim
+
+editor config - common settings for all devs
+  - see website editorconfig.org
+  - note: your editor likely needs a plug-in to support
+      (download it from the editorconfig website)
+     for vscode, cmd P, copy this to command palette:   ext install EditorConfig
+
+js_dev_env/.editorconfig  - file placed in root of your project folder
+
+# editorconfig.org
+root=true
+
+[*]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+charset = utf-8
+trime_trailing_whitespace = true
+
+[*.md]
+trim_trailing_whitespace = false
+
+========================================================
+Package Management
+---------------------
+bower - old, no build step, 
+jspm - js pkg mgr (bundles, )
+jam, volo, ...
+npm ***
+
+nodejs.org   install nodejs v6.6.0  (or at least v4.5)
+Installing node, npm will be installed with it.
+
+package.json  - node manifest, list of packages installed
+- create a new file in your root folder and copy
+the contents of webpage found at the following to it:
+      bit.ly/jsdevpackagejson
+
+Open an integrated terminal in vscode 
+  view / Terminal  ... and set to bash mode 
+
+should be in current dev directory
+npm install   -- loads all the files in the package.json
+
+ deprecated babel-preset-latest@6.24.1: We're super 😸  excited that you're trying to use ES
+2017+ syntax, but instead of making more yearly presets 😭 , Babel now has a better preset that we r
+ecommend you use instead: npm install babel-preset-env --save-dev. preset-env without options will compile ES2015+ down to ES5 just like using all the presets together and thus is more future proof. 
+UNMET PEER DEPENDENCY webpack@4.26.1
+
+security scanning of modules is now built into npm
+previously you needed to install the nsp module and check
+  npm install -g nsp
+  nsp check
+
+========================================================
+Dev Webserver
+-----------------
+configure dev web server so it starts automatically when 
+we start editing, and shows latest view after save.
+
+servers to pick from:
+------------------
+http-server   - ultra simple, and light wegith
+live-server   - simple, but shows results immediatly
+
+express *** - comprehensive, high config, prod ready
+koa  - embraces ES6 generators
+hapi  - walmart labs, server config
+
+budo  - browserfy bundled, hot reload
+webpack * - has built in web server, hot reload
+
+browsersynch - github.com/BrowserSync/recipes
+
+    sets up dedicated ip addres on your internet
+    all devices can connect to that ip and be insynck
+    useful to make sure app works across multiple browsersynch
+    - integrates with express and webpack
+
+Setting up express
+--------------------
+   - already installed in npm installa
+
+   create a buildScripts folder, and add the following file.
+     \srcServer.js
+
+     var express = require('express');
+     var path = require('path');
+     var open = require('open');
+
+     var port = 3000;
+     var app = express();
+     
+     app.get('/', function(req, res) {
+       res.sendFile(path.join(__dirname, '../src/index.html'));
+     });
+
+     app.listen (port, function(err) {
+       if (err) {
+         console.log (err);
+       } else
+       open('http://localhost:' + port);
+       }
+     });
+
+   create a source folder and index.html file
+       \src\index.html 
+   
+    <!doctype=<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      <title>Express App</title>
+    </head>
+    <body>
+      <h1>Hello World! </h1>
+    </body>
+    </html>
+
+   launch the express server and app:
+      node buildScripts\srcServer.js
+
+options to share your website with others for free
+    (public ip address, other than AWS or Azure)
+------------------------------------------------
+  localtunnel ** - easy setup, http thru firewall
+      1) npm install localtunnel
+      2) start your app
+      3) lt --port 1000
+
+  ngrok * (secure tunnel to your machine)
+      1) sign up for ngrok
+      2) install ngrok
+      3) install authtoken
+      4) start your app
+      5) ./ngrok http 80
+      password protect access compared to localtunel
+  
+  surge (deploy static files only, serves files on public server)
+    1) npm install -g surge
+    2) surge
+
+  now  (deploy node package.json to cloud, gets a new url)
+      1) npm install -g now
+      2) create a start script 
+      3) now
+      publishing code to remote site, don't need to keep 
+      local machine running.
+
+Steps to use localtunnel:
+---------------------------
+npm install localtunnel -g
+node buildScripts/srcServer.js
+
+open another terminal window (+) on vscode
+lt --port 3000 --subdomain blahblah
+>> your url is http://blahblah.localtunnel.me
+
+(note: your local firewall may block the connection)
+
+
+========================================================
+Automation
+---------------
+Grunt - oldest, plug in model, file based, slower
+Gulp * - pipe output of step 1, to step 2, avoids file io
+     
+npm Scripts *** - latest, simple - declared in package.json
+        can leverage o/s commands, directly use npm packages
+        call separate node scripts, 
+        convention based pre/post hooks
+        simpler to debug, better documentation
+
+    see bit.ly/npmvsgulp
+
+using npm scripts
+--------------
+package.json
+   ...
+  "scripts": {
+      "start": "node buildScripts/srcServer.js "
+  }
+
+npm start   // type this on cmd line to excute this start script
+
+create a pre hook script
+---------------------- (create this js file)
+buildScripts/startMessage.js
+
+  var chalk = require('chalk');
+  console.log(chalk.green('Starting app in dev mode ...'));
+
+----------- modify the package.json ...
+
+package.json
+   ...
+  "scripts": {
+      "prestart": "node buildScripts/startMessage.js",
+      "start": "node buildScripts/srcServer.js ",
+      "security-check": "nsp check",
+      "share":, "lt --port 3000"
+
+  }
+
+  Note:  any scripts prefixed with pre  - will auto run before
+      the script with the same name
+
+      (so prestart will run before start, and 
+      poststart will run after start, when you request start)
+
+npm scripts do not need tools loaded globally,
+all the modules in the .bin folder are already in the path
+
+------ running jobs in parallel.  (npm-run-all)
+
+"start": "npm-run-all --parallel security-check open:src",
+"open:src": "node buildScripts/srcServer.js"
+
+npm start
+
+"localtunnel": "lt --port 3000",
+"share": "npm-run-all --parallel open:src localtunnel"
+
+npm run share
+========================================================
+Transpiling
+---------------
+
+Javascript history
+--------------------
+1997  ES1 - first release of javascript
+1998  ES2 
+1999  ES3
+2009  ES5
+2015  ES6 / ECMA2015 - tons of features, yearly releses
+2016  ES7 / ES2016 - added array includes, exponent
+2017  ES8 / ES2017  - async await, Class props, Object spread
+
+New Features are added in phases, (experimental presets)
+stage-0  Strawman (just an idea)
+stage-1  Proposal (worth looking into)
+stage-2  Draft (inital spec)
+stage-3  Candidate (initial implmentation)
+stage-4  Finished  (will be added to next release)
+
+you can write code in other languages, convert and compile (transpile)
+the code into javascript. Over 100 like c#, ruby, ...
+search  coffeescript/wiki/list-of-languages.
+
+The most popular transpilers
+---------------------------
+Babel *** - modern javascript, standard based (works everwhere)
+      - sandardized javascript - more compatible than TypeScript
+      (react initially had difficulty with typescript, and eslint too)
+      - quicker to add support for expermental js features
+      - no type defs and annotations required
+      - ES6 imports are statically analyzable
+      - Test, Lint, Bable, Great Libs, IDE supp = type Safety
+
+TypeScript ** - superscript (more features than javascript)
+          - provides type safe coding (less sloppy declarations, catches errors earlier)
+          - .NET developers familiar with this
+          - enhanced autocompletion while you type
+          - safer code refactoring, clearer intent of code
+          - interfaces, type 
+
+Elm   -  it's own eco system and language  (not best option)
+    - compiles down to regular javascript, interops with JS
+    - has clean syntax (no semicolons, parenthesis optional)
+    - immutable data strutures
+    - provides friendly error messages
+    - all errors are compile-time (early) insted of run-time(late)
+        (easier to fix compile-time vs run-time errors)
+  
+1) Pick Babel config method (two ways to choose)
+
+   .bablrc  - place in project root, not npm specific, easier to read
+   package.json  - reduces number of config files, put in a section babel
+
+   Babel has plug-ins that provide additional functionality.
+
+   if using expermimental features in babel you need to load it's plug-in 
+
+   If you are using Node or Electron server you can specify a babel plug-in that
+   matches what you need to transpile on your server
+    Preset                          Feature             Used for
+    babel-preset-es2015-node        version detection    Node
+    babel-preset-latest-minimal     feature detection    Electron (chrome)
+
+      The transpiler will kick in only when it finds a version or feature that
+      is not supported out of the box and thus needs to be transpiled(converted to js)
+
+2) Pick style of how to do build scripts
+ES5 method    
+    - no waiting for transpile (faster build time)
+    - no dependency on a transpiler (easier to config)
+
+Transpiled method
+    - enjoy the latest features of javascript
+    - consistent coding style
+    - use same linting rules everywhere
+    - eventually can remove transpiler once feature is fully supported
+
+Setting up Babel
+--------------------
+include Babel in your node modules (already done earlier)
+create .babelrc  config file in project root folder
+    - tell babel to always use the latest javascrip features
+  {
+    "presets": [
+      "latest"
+    ]
+  }
+
+modify the package.json  start line, so it uses babel to transpile the code
+down to ES5 format before passing it on to Node to execute.
+
+  change this ...
+     "open:src": "node buildScripts/srcServer.js",
+  to this ...
+      "open:src": "babel-node buildScripts/srcServer.js",
+
+      (just added the prefix babel-  in front of node)
+
+Testing this change.  One of the newer ES6 features that replaces
+the older ES5 standard is the use of modules.  Using babel
+this code will be transpiled from ES6 format down to ES5 javascript
+so it will run on more browsers/servers.
+
+startMessage.js
+  //  var chalk = require('chalk');    old ES5 syntax
+  import chalk from 'chalk';        // new ES6 syntax
+
+  console.log(chalk.green('Starting app in dev mode ...'));
+
+  //note: another commmon ES6 syntax changes   var (is ES5)   const (is ES6)
+
+run the following to Test the changes
+
+  npm start -s 
+
+========================================================
+Bundling
+----------------
+Bundlers take all js files and packages them for a target env.
+
+By default CommonJS doesnt work in browsers, so you need
+to load the code in another format using a bundler.
+Also Improves page loading performance in web pages by partitining 
+Also Speeds node performance (node requires take less time to import)
+
+To avoid using global vars, which is bad progrmming practice
+alteratives ways to modularize code evolved.
+
+5 Module Formats
+-------------------
+     IIFE (Immediatly Invoked Function expressions)
+     AMD (Async Module Defn)
+     UMD (Universal Module Defn)
+ *   CJS (Common JS)  - Node
+ **  ES6 modules   - ES6 Javascript
+
+IIEF - encapsulates our javascript  (obsolete)
+   (function() {
+     // my code here
+   })();
+
+ AMD - uses require js to encapulate code (obsolete)
+      define(['jq'], function(jq) {} );
+
+ CJS - use this method when using node w/o transpiler.
+      var jquery = require('jquery');
+
+ ES6 - use this method when doing ES6 Javascript (ES2015)
+      import jquery from 'jquery';
+
+      standardized, will be the new way for all code going forward
+      makes code able to be analyzed statically (early compile errors found)
+      Tree shaking - traverses source code and eliminates dead/unused code 
+                      (having less code improves performance)
+      this format easier to read than others.
+      provides options like: named imports and  default exports
+
+Recommendation:  Use ES6 modules
+
+Bundlers
+----------------------
+Require JS   - used AMD pattern  (obsolete)
+browserify * - bundles code that uses CJS format for web
+                lots of plug-ins for linter, etc
+                simplest - but takes more work.
+
+webpack **   - bundles more than js, also CSS,images, ..
+        - built in hot-reloading of web servers  (see changes immediatly on sites)
+        - comprehensive solution.  Most popular.
+        - use inline imaging.
+        - bundle splitting for different sections of app
+        - tree shaking will be in WebPack 2.0
+
+Rollup  - tree shaking  
+      - faster that webpack, but quite new, not enough features
+JSPM  - can load all type of modules
+    - has its own package manager (load from npm, git,...)
+    - loads modules at runtime
+    - uses Rollup
+
+Recommendation:  Use Webpack
+
+Setting up Webpack
+--------------------
+1) npm install webpack  (already done earlier)
+
+note:  results in the project.json webpack module dependencies for webpack
+    "webpack": "^4.12.0",
+    "webpack-dev-middleware": "^3.1.3",
+    "webpack-hot-middleware": "^2.22.2",
+    "webpack-md5-hash": "0.0.6"
+
+
+create at least two different config files for webpack
+ - one for settings required for development to allow debugging, ...
+ - one for production deploys that minimize code, and reduce libraries 
+     minumum required for security and performance.
+
+
+2) webpack.config.dev.js   
+    // create config file in root of project
+    // copy code from bit.ly/2dSZwea
+
+import webpack from 'webpack';
+import path from 'path';
+
+export default {
+  devtool: 'inline-source-map',
+  entry: [path.resolve(__dirname, 'src/index')],
+  target: 'web',
+  output: {
+    path: path.resolve(__dirname, 'src'),
+    publicPath: '/',
+    filename: 'bundle.js'
+  },
+  mode: 'development',
+  plugins: [
+    new webpack.LoaderOptionsPlugin({
+      debug: false,
+      noInfo: true
+    })
+  ],
+  module: {
+    rules: [
+      { test: /\.js$/, exclude: /node_modules/, loaders: ['babel-loader'] },
+      { test: /\.css$/, loaders: ['style-loader', 'css-loader'] }
+    ]
+  }
+};
+
+-- see more comprehensive explanation of this at the author's
+   react/redux in ES6  or webpack course.
+
+     entry point = the current proj direcory/src/index.js
+     devtool = source map reference - used to debug bundled code
+     noInfo = false (shows in)
+     build target = web, node (server), electron (desktop)
+     outtput = where it will create bundle.js 
+       (but acually doesnt create a file, memory only, you just specify a name)
+     plugins = list of additional webpack features loaded
+                linting styes, hot reloading, ...
+     module loaders = teach webpack hot to handle types of files
+        js modules, css, images, sass, less, etc.
+
+3) Need to update webserver to serve our webpack bandle
+
+buildScript/srcServer.js   - is where we define the server
+
+add ...
+  import webpack from 'webpack';
+  import config from '../webpack.config.dev';
+  ...
+  const compiler = webpack(config);
+
+  -- tell express to use webpack dev middleware
+
+  app.use(require('webpack-dev-middleware')(compiler, {
+    noInfo:true,
+    publicPath: config.output.publicPath
+  }));
+
+4) set up the src/index.js file for webpack to bundle
+
+index.js
+----------------
+import numeral from 'numeral';
+
+const courseValue = numeral(1000).format('0.0.00');
+console.log(`I would like to pay ${courseValue} for this course.` );
+// use special back tic `  to work with es6 template
+
+5) modify index.html to add a javascript hook to load the webpack bundle
+    <script src="bundle.js"></script>
+
+6) create a src/index.css file
+
+    body{
+      font-family: Sans-Serif;
+    }
+
+    table th {
+      padding: 5px
+    }
+
+7) modify the index.js file to load the css file ..
+   import './index.css';
+
+8) run the code
+
+npm start -s
+
+Fonts on main page will be bigger because of css file.
+inspect the code in the browser (press F12, or right click - inspect)
+    - console at bottom of page should show console.log results.
+    - click on network tab, press refresh
+            search for bundle.js on left to verify it is loaded in the response
+    - click on  response tab, scroll thru this
+       to see how code was transpiled down to ES5.
+    - click on index.js, press refresh
+        - the dev tool inspector should stop at the debugger line
+           Press F10 to step to next line
+           Press F8 to resume app.
+
+   go to this web page to learn more about chrome browser dev tools
+     https://developers.google.com/web/tools/chrome-devtools/sources?utm_source=devtools&utm_campaign=2018Q1
+
+
+sourcemaps
+-----------------
+Allows you to debug bundled, transpiled and minified code.
+   maps code back to original ES6 source code
+   source maps are generated automatically on build.
+   (sourcemaps are only downloaded if you open the developer tools)
+
+add sourcemaps to bundler   webpack.config.dev.js
+    devtool: 'inline-source-map',
+
+    (other types are available, documented at webpack.git.io/docs)
+      hidden-source-map, cheap-source-map, eval, ...
+
+add a debug point to your script.
+
+index.js ...   add this line in the script
+  debugger;
+
+
+========================================================
+Linting
+----------------
+Discover typing errors when you press save.
+A number of rules can be set up to run on save.
+Enforces consistent coding, with feedback
+   restrict usage of confirm, alert, eval,
+     look for missing commas, extra parenthesis
+warn about leaving debugger/console statements in code
+
+Types of linters
+------------------------
+JSLint - original -obsolete
+JSHint - more features, but no longer popular
+ESLint *** - most popular
+      supports ES6, and ES7 and object spread
+Babel-eslint
+      supports experimental JS code
+
+TSLint * - if you need to support typescript.
+
+Options for ESLint
+---------------------
+  1 config format
+  2 which built-in rules to use
+  3 warnings/errors to display
+  4 which plug-ins
+  5 use presets instead?
+
+1. put in dedicated file (.eslint.rc) or package.json
+
+adding to package.json
+"eslintConfig":{
+  "plugins": ["example"],
+  "env": {
+    "example/custom": true
+  }
+}
+
+2. built in rules to use ...
+
+  Look on ESLint website to look at best practices
+
+3. which rules should warn only versus errors
+    errors break the build that you need to addressb
+    before you can continue.
+
+    warnings let you continue, but could be left
+    in the final build.
+
+    use warnings for sytle issues
+    use errors for things that cause bugs
+
+4. which plug-ins to enahnce your app with.
+    eslint-plugin-react, angular, nodejs
+
+    See the Awesome ESLint website to choose.
+
+5. *** Use a preset of settings already made so you
+dont have to go through all these decisions. 
+* You can pick the standard ESLint preset and tweak it where you like.
+
+or pick other standards like  airbnb, standardjs, xo
+   but you can't modify it.  
+
+Need to set up something to help ESLint warn you of errors since
+it doesnt do it right out of the box.
+  - could add eslint-loader to webpack to re-lint files on save.
+* - better to add eslint-watch npm module to warn you on every file save.
+
+Setting up ESLint
+-----------------
+note:  if you have linting turned on in your editor, disable them
+so this works properly.
+
+add .eslintrc.json  file in project root folder
+    // copy from bit.ly/jsdeveslint
+
+{
+  "root": true,
+  "extends": [
+    "eslint:recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 7,
+    "sourceType": "module"
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "mocha": true
+  },
+  "rules": {
+    "no-console": 1
+  }
+}
+
+Note:  no-console-settings  0 = off, 1 = warning, 2 = error
+   (error would stop the build)   
+   (also can use words:  off, warn, error)
+
+Modify package.json to add a script to run eslint-watch
+any time a file or file in a specified folder changes
+
+"scripts":{
+  ...
+  "lint": "esw webpack.config.* src buildScripts --color",
+
+  Note:  esw is the executable name for eslint-watch
+
+}
+
+Modify any build scripts that you want to ignore lint errors
+by adding this comment line in it.  (i.e. srcServer.js)
+
+/* eslint-disable no-console */
+
+or add a comment at the end of a line for rare exceptions
+console.log(...)  // eslint-disable-line no-console
+
+Finally,  run the following to check the eslint results ...
+npm run lint
+--------------------------
+To have eslint watch files by default 
+
+"lint:watch": "npm run lint -- --watch"  // passing watch flag to lint script
+
+npm run lint:watch
+
+add lint:watch to end of start script too.
+
+
+========================================================
+HTTP 
+----------------
+
+========================================================
+Tesing and Continous Integration (CI)
+----------------------------------
+testing styles
+ * - unit testing - a single fx or module in an automated way
+         expects certain result when run of a single function
+         run tests in isolation.
+   - integration testing - interaction between modules, calls to api
+           - take more time to spin up external resources like databases, servers.
+   - ui testing - automate GUI screen tests
+
+Unit testing decisions (6)
+1 - framework to pick (all pretty good, easy to switch later)
+*  mocha - most popular, mature, flexible
+  jasemine - includes built in assertion libraries
+  tape - simple to config
+  QUnit (obsolete)
+  AVA - runs tests in paralelle, and only affected objects
+  Jest - wrapper over Jasmine, great for react.
+
+2 - assertion library (some )
+declare what you expect  (ie  expect(2+2).to.equal(4))
+
+*  chai.jspm
+   should.js
+
+3 - helper libraries
+*  jsdom (implmentaton of browser dom that doesnt need to open a browser)
+*  cheerio (jquery the server)  assert that certain html exists
+    - use standard jquery commands /selectors
+
+4 - where to run tests
+    - run in browser (karma, Testem) - takes too much config, slower
+ *  - headless browser (PhantomJS) - don't need to see browser
+ ** - in-memory DOM (JSDOM) - simulates DOM in memory.
+
+5 - where to place tests
+ - Centralized in folder /tests (mocha)
+      reduces noise in your , don't want to deploy tests to prod
+* - Alongside the file under test
+      easier to import (same paths), tests are not hidden (see what is missing eaiser)
+      easier to edit both files at the same time
+      easier to refactor, drag both to new folder
+    Naming conventions  often add suffix of .test.js .spec.js
+
+6 - when to run tests
+   - should run tests every time you save (TDD test driven development)
+   - increases visiblity of tests
+
+   - integration tests should be run ondemand, and by qa.
+
+decisions:
+   test framework = mocha
+   assertion library = chai
+   helper library = JSDOM
+   how to run tests = use Node
+   locate test scripts along side normal scripts (diff suffix)
+   run unit tests automatically upon save.   
+
+Setting up test env.
+---------------------
+
+
+Add buildScripts/testSetup.js file to run scripts.
+  // register babel to transpile before our tests run
+    require('babel-register')();
+
+  // disable webpack features that mocha doesnt understand
+  //NOTE this does not work ???:    require.extensions('.css') = function() {};
+
+
+To fix the above problem, try adding this to the top of this script ...
+  import requireHacker from 'require-hacker'
+  const extensions = ['css', 'gif', 'jpg', 'svg']
+
+  extensions.forEach(type => {
+    requireHacker.hook(type, () => 'module.exports = ""')
+  })
+
+
+Add a test command to package.json under the scripts section
+  "test": "mocha --compilers js:babel-register --reporter progress buildScripts/testSetup.js \"src/**/*.test.js\""
+
+   This tells mocha to use the reporter style progess report (simple output)
+     then run the testSetup script
+     and look in the src folder, and any subfolder (**)
+        for any file that has a name like *.test.js, 
+        and run that test script.
+
+Add a sample test file to use  (src\index.test.js)
+  // load a named assertion library
+  import {expect} from 'chai';
+
+  describe('Our first test', () => {
+    it('should pass', () => {
+      expect(true).to.equal(true);
+    });
+  });
+
+Run a sample test to see if it works
+
+  npm test
+
+Testing the DOM using JSDOM
+ edit index.test.js to add ...
+
+ import jsdom from 'jsdom';
+ import fs from 'fs';
+
+// read the index.html file to memory
+// get a handle to the page window object
+// find the first h1 tag, then run a test on it's contents
+ describe('index.html', () => {
+   it('should say hello', (done) => {
+     const index = fs.readFileSync('./src/index.html',"utf-8"); 
+     jsdom.env(index, function(err, window) {     
+        const h1 = window.document.getElementsByTagName('h1')[0];  
+        expect(h1.innerHTML).to.equal("Hello World!");
+        window.close();   // free up memory
+        done();   //need this for asynch calls like call to function above.
+     });
+   });
+
+ });
+
+npm t   // run the test  (t is shorthand for test)
+
+watching tests - to set up tests to run on every save made.
+----------------------------------- 
+To package.json add ..
+"test:watch": "npm run test -- --watch"   
+
+and modify the start line ...
+"start": "npm-run-all --parallel open:src lint:watch test:watch",
+
+continous integration Servers
+----------------------------------
+Commit code frequently, and verify that the works ok on another machine too.
+fail the build when someone commits a change that fails automated tests.
+If you find this out sooner, it is easier to find and fix the problem
+   - forgot to add dependenciy to package.json
+   - forgot to add a new file to source control
+   - code that does not run on other platforms.
+   - your local node version is different than build server.
+   - made a bad merge.
+
+CI Server ...
+   - builds automatically on another machine when you check in
+   - runs test suite.
+   - checks code coverage is above a threshold
+   - automate deploy to prod if all checks pass.
+
+Which server to use?
+*  Travis CI - linux based  (hosted)
+*  Appveyor - windows based
+*  Jenkins - cross platform (you set up server)
+   circleCI
+   semaphore
+
+go to travis-ci.org  - easily synch with github, sign in with github account
+        (click plus sign, and pick a repos.  Slide to turn on)
+        click on the gear to change settings if you like, default is ok
+            build on Pushes,  Build on Pull Requests.
+
+Make a local config file for travis:
+
+.travis.yml
+--------------
+  language: node_js
+  node_js:
+    -"6"
+
+In your local env, commit you changes.
+git status
+git add .
+git commit -m "module 9 work"
+git push  (sends code to github)
+    go to travis.org  and check status
+
+
+Appveyor
+-----------------------------
+www.Appveyor.com
+  sign up for free, then sign in using github accoount
+  press + to add repos/project
+      - pick github, and find your project (add)
+      - settings tab  (use defaults)
+
+  Add local file appveyor.yml to root of project
+
+  # test against this version of node
+  environment:
+    matrix:
+      - nodjs_version: "6"
+
+  #install scripts - run after repo cloning
+  install:
+    - ps: Install-Poduct node $env:nodejs_version
+    - npm install
+
+ # post-install test scripts
+  test_script:
+  # output useful info for debugging
+    - node --version
+    - npm --version
+    # run test
+    - npm test
+
+  # Don't actually build
+  build: off
+
+Then check in the new file and push it to github
+git add .
+git status
+git commot -m 'add to appvayer'
+git push
+
+Then check out the build on ci.appveyor.com/projecs/TerryS/js-dev-env
+    go to the "Latest Build" tab
+========================================================
+HTTP Requests  and Mock API calls (for unfinished modules)
+
+In order to interact with other services and sites, http calls are used
+to communitcate with them  (database, api calls, etc)
+When developing it is useful to make routines that can pretend to be
+a service so you can automate test and work even when not connected to the internet.
+
+-----------------------------------------
+HTTP Call Approaches
+
+    Node options:  
+        http (low level module)
+     *  request (higher level module - easier to use)
+
+    Browser options:
+        XMLHttpRequest (XHR)  - oldest method, low level.
+          let http = new XMLHttpRequest()
+          http.open()
+
+      * JQuery  ($. ajax object)
+        Framework based libraries  like Angular
+      ** Fetch (WHAT working group) has modern replacement for XMLHttpRequest
+          Fetch can be used if your framework doesnt support browsers
+          Fetch Need polyfil to support browsers that don't recognize Fetch
+            (in future, browsers will support fetch, so no polyfil will be needed)
+              github.com/github/fetch
+              github.com/mathew-andrews/isomorphic-Fetch
+
+          Example Fetch call
+          -------------------
+            var request = new Request('http://your-api.com/user',{
+              method: 'GET',
+              mode: 'cors',
+              headers: new Headers({
+                'Content-type': 'text/html; charest=UTF-8'
+              });
+            });
+
+            fetch(request).then(onSuccess,onError);
+           // (note: uses promises and results to get value back)
+
+
+    Node & Browser options:
+        Isomorphic-fetch (universal) - fetch like api that runs on server and browser
+        xhr  - subset of the request library (runs on both node and browser)
+        SuperAgent
+     ** Axios   clean promise based solution (uses good parts of angular)
+
+          // sample axios usage:
+          axios({
+            url: 'http://your-api.com/user',
+            method: 'post',
+            headers: {
+              'Content-type': 'text/html: charset=UTF-8'},
+              data: text
+            }
+          }).then(onSuccess, onError)
+
+Centralize all your API calls in a single support
+  - configure all calls
+  - hanlde preloader logic (spinner)
+  - Handle errors in a standard way        
+ - single seam for mocking your api
+ 
+Example using Fetch
+--------------------------------
+modify srcServer.js  to add a new route called /users
+
+app.get('/users',function(req,res) {
+  // hard coding for simplicity, pretend this hits a real database
+  res.json([
+    {"id": 1,"firstname":"Bob","lastname":"Smith","email":"bob@gmail.com"},
+    {"id": 2,"firstname":"Tammy","lastname":"Norton","email":"tnorton@gmail.com"},
+    {"id": 3,"firstname":"Tina","lastname":"Lee","email":"tina.lee@gmail.com"}   
+  ]);
+});
+
+you can call this using the website call  localhost:3000/users
+after you do a npm start -s
+
+Centralize your HTTP API calls
+---------------------------
+create a folder src/api
+
+create a file there called userApi.js
+    // abstract away api in one place
+
+    import 'whatwg-fetch';  //polyfill to allow fetch to work on unspported browser
+
+    // only one public function exposed (generic so reusable)
+    export function getUsers() {
+      return get('users');
+    }
+
+     // the main code function - add put, post, and delete as well
+    function get(url) {
+      return fetch(url).then(onSuccess,onError);
+    }
+
+    function onSuccess(response){
+      return response.json();
+    }
+
+    function onError(error) {
+      console.log(error); // eslint-disable-line no-console
+    }
+
+In index.html ...  (add a table in the body)
+
+<h1>Users</h1>
+<table>
+  <thead>
+    <th>&nbsp;</th>
+    <th>Id</th>
+    <th>First Name</th>
+    <th>Last Name</th>
+    <th>Email</th>
+  </thead>
+  <tbody id="users">
+
+  </tbody>
+</table>
+
+Note:  the id of "users" is our hook to use to populate the section
+with data from our index.js javascript code, which calls our API.
+
+In the index.js file ...
+
+    // ------------ Example API call section -------------
+    import {getUsers} from './api/userApi';  // load our api code
+
+    // populate the html table with user via API call.
+    getUsers().then(result => {   // call to get user.  Then fx used on prmoise
+      let userBody = "";
+
+      result.forEach(user => {    // loop thru the rows returned in the result
+        userBody += `<tr>
+          <td><a href="#" data-id="${user.id}" class="deleteUser">Delete</a></td>
+          <td>${user.id}</td>
+          <td>${user.firstname}</td>
+          <td>${user.lastname}</td>
+          <td>${user.email}</td>
+        </tr>`
+      });
+      // populate the tag that has id 'users' on the page with the api results.
+      global.decodeURIComponent.getElementById('users').InnerHTML = userBody;
+    });
+
+lastly, modify your test for the index.htl file (index.test.js)
+
+    // ------------- section added for api call test ----
+
+    describe('index.html', () => {
+      it('should have h1 that says Users', (done) => {
+        const index = fs.readFileSync('./src/index.html',"utf-8"); 
+        jsdom.env(index, function(err, window) {     
+          const h1 = window.document.getElementsByTagName('h1')[0];  
+          expect(h1.innerHTML).to.equal("Users");
+          window.close();   // free up memory
+          done();
+        });
+      });
+    });
+
+
+
+Selective Polyfilling
+----------------------
+Use Polyfill.io to send poly fills to only those browsers that need a fix to run
+your newer language script.  Place the following at the top of your script to read
+the header to determine its need.
+
+<script src="https:/cdn.polyfill.io/v2/polyfil.min.js"></script>
+
+to use only the fetch feature ...
+<script src="https:/cdn.polyfill.io/v2/polyfil.js?features=fetch"></script>
+
+Mocking HTTP Calls
+-------------------------------------------------
+
+Need for unit testing, instant responses for slow services,  keep working
+when services are down, perhaps the api service has not been written yet...
+
+If a separate team is building a service layer, you can startd
+    developing with a mock server while they get it ready.
+
+Ways to Mock HTTP:
+  Nock - can mock http for your unit tests.  Any request to the given
+    http address, it will return your mock address.
+
+ 1 Use Nock, and static json to provide results
+ 2 Create a custom dev webserver to provide dynamic results
+    api-mock
+  * JSON server - makes a fake webiste using static data
+        supports reads and updates, so looks real.
+    JSON Schema faker - will provide fake random data
+    Express, Browsersync - write a web server by scratch
+
+To create a Mock HTTP api
+-----------------------------
+1. Declare our schema (using JSON schema faker)
+2. Generate Random Data 
+    (faker.js, chance.js, randex;.js - all bundled with JSON schema faker)
+    randex uses random expressions to generate data
+    github.com/json-schema-faker/json-schema-faker
+    github.com/Marak/faker.js/wiki   and .../index.html
+
+
+json-schema.org
+  JSON schema - provides a standard for portraying your data structures
+  (aside: GraphQL, Odat are examples of other data standards by other groups)
+    instance = document that contains the data
+    schema = supporting document that descibes the data (similar to XML)
+
+Setting up a MOCK API Server
+---------------------------
+1)  buildScripts/mockDataSchema.js ------------------------
+
+    // copy snippet from bit.ly/ps-mock-data-schema
+
+    export const schema = {
+      "type": "object",
+      "properties": {
+        "users": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 5,
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number",
+                "unique": true,
+                "minimum": 1
+              },
+              "firstName": {
+                "type": "string",
+                "faker": "name.firstName"
+              },
+              "lastName": {
+                "type": "string",
+                "faker": "name.lastName"
+              },
+              "email": {
+                "type": "string",
+                "faker": "internet.email"
+              }
+            },
+            "required": ["id", "firstName", "lastName", "email"]
+          }
+        }
+      },
+      "required": ["users"]
+    };
+
+
+2) generateMockData.js  -------------------------
+
+/* this script generates mock data for local dev environments.
+   This way you don't hae to point to an actual api, but still 
+   get randomized realistic data with rapid page reloads
+*/
+/* eslint-disable no-console */
+
+import jsf from 'json-schema-faker';
+import {schema} from './mockDataSchema';
+import fs from 'fs';      // node file system module
+import chalk from 'chalk';  // colorize your log output
+
+// make teh call to jsf, passing it the schema def, and
+// convert the results to a json string
+const json = JSON.stringify(jsf(schema));
+
+// store the results in a file called db.json which JSON server
+// can serve its results from.
+fs.writeFile("./src/api/db.json",json, function (err){
+  if (err){
+    return console.log(chalk.red(err));
+  } else {
+    console.log(chalk.green("Mock data generated."));
+  }
+});
+
+
+
+  NOTE: if you are using faker v0.5, you might have to rewrite it as  this ...
+
+    import faker from "faker"
+
+    jsf.extend("faker", function() {
+      return faker
+    })
+
+    jsf.resolve(schema).then(function(result) {
+        fs.writeFile(outputFile, JSON.stringify(result, null, 2), function(err){
+            if (err) {
+                return (console.log(r(err)));
+            } else {
+                console.log(g(`Mock Data Generated Here: ${outputFile}`));
+            }
+        });
+    });
+
+
+3) modify package.json to add a new script  ------------------
+
+  "generate-mock-data": "babel-node buildScripts/generateMockData",
+  "prestart-mockapi": "npm run generate-mock-data",  
+  "start-mockapi": "json-server --watch src/api/db.json --port 3001"
+
+    Add start-mockapi to the end of your normal start script in package.json
+
+4) run the script -------------------------
+
+    npm run generate-mock-data
+        // this will generate the db.json file
+
+    npm run start-mockapi
+        // this will start the json server running on port 3001
+        // it will generate an endpoint (ie /users) for each high level
+        // object it runs.
+
+    note:  the prestart command will make sure a fresh data set is loaded each time
+          you start the json server.
+
+
+
+5) Get your code to call the mock api server when in dev mode
+
+create /src/api/baseUrl.js
+
+    export default function getBaseUrl(){
+      const inDevelopment = window.location.hostname === 'localhost';
+      return inDevelopment ? 'http://localhost:3001/' : '/';
+    }
+modify /src/api/userApi.js
+
+   import getBaseUrl from './baseUrl';
+   const baseUrl = getBaseUrl();
+
+      ...  and change ..
+
+    function get(url) {
+      return fetch(baseUrl + url).then(onSuccess, onError);
+    }   
+
+NOTE: you can test the results by running the project   (npm start -s)  or npm run start-mockapi
+   if you inspect the page, click on network tab, refresh,  click on the users object to view
+
+
+6) ----- Add logic to handle updates/delete Users  ----
+(alternatevly you could use "adanced rest app" - chrome plug-in)
+
+modify the userApi.js file to add the following ...
+
+// route to allow deletion of recors
+export function deleteUser(id) {
+  return del(`users/s${id}`);
+}
+//----------- private functions -----------------
+
+function del(url) {
+  const request = new Request(baseUrl + url, {
+    method: 'DELETE'
+  });
+  return fetch(request).then(onSuccess, onError);
+}
+
+------------ also modify the index.js to add ... ----------------
+import {getUsers,deleteUser} from './api/userApi';  // load our api code
+
+const deleteLinks = global.document.getElementsByClassName('deleteUser');
+
+  // Must use array.from to create a real arra from a DOM collection
+  // getElementsByClassName only returns  an "array like" object
+  Array.from(deleteLinks, link => {   // iterate thru array of tags
+    link.onclick = function(event) {  // add click handler to each
+      const element = event.target;
+      event.preventDefault();     // prevent changes to url
+      deleteUser(element.attributes["data-id"].value);  // remove the user from the array
+      const row = element.parentNode.parentNode;
+      row.parentNode.removeChild(row);  // remove the user from the DOM
+      };
+    }); 
+
+
+
+========================================================
+Project Structure
+-------------------
+Create a demo app to help show the starter kit decisions in ation.
+   Easier to understand file structure, and can copy patterns used.
+   
+tip1: javascript should always exist in a separate file not a script tag
+   - in a script you can leverage the starter kit code
+     (automate test, linting, code reuse, transpile, import explicit dependdncies,   ...)
+
+   - if you need to serve js from a server that does not normally
+   code in js, (like c#), use the Configuration Object Pattern and 
+   inject server js code from scripts stored in a database and passed as an 
+   object to the online code.  Ok to dynamically generate JSON instead of javascript.
+   Server code can fork logic as neccesary.
+
+tip2: organize code by Feature instead of file type (like MVC projects)
+   sample file types  /components
+                      /data
+                      /models 
+                      /views
+
+   sample features    /authors
+                      /courses
+
+      larger projects are easier to organize be feature, and less moving around
+
+
+
+tip3: extrat logic to POJOs  (POJO = plain old javascript/java objects ) 
+                            (POCO =  plain old clr logic for c#)
+    - pure logic, no framework specific logic/terms
+    - if working in REACT, most logic should reside outside react components
+       so easier to test, use, and minimize impact of framework.
+
+       see example in gethub    react-slingshot starter kit
+
+========================================================
+Production Builds
+-------------------
+Set up the following features in an a prod build:
+
+Minification - reduce latency on loading pages by eliminating spaces.
+sourcemaps - help debug production code
+Dynamic html - handling
+Cache busting - make sure users get latests version of code
+Bundle splitting - load just what users need for a page
+Error logging
+
+Minification
+  - removes comments, whitespace, shortens var names.
+  - rollup, webpack 2  - uses tree shaking to exlude unused codes
+
+Using webpack to minifiy code and make a bundle
+-----------------------------------------------
+1) copy the dev webpack project to create prod version
+
+/webpack.config.prod.js
+  import webpack from 'webpack';
+
+  devtool: 'source-map',   // longer to build, but best debug experiseicne
+     path: path.resolve(__dirname, 'dist'),  // change from src to dist
+
+  // valid optimization modes {production,development,none}
+  mode: 'production',
+  plugins: [
+    // eliminate duplicate packages when generating bundle
+    new webpack.optimize.DedupePlugin(),
+    // Minify JS
+    new webpack.optimize.UglifyJsPlugin(),
+    // not sure what this does ...?
+    new webpack.LoaderOptionsPlugin({
+      debug: false,
+      noInfo: true
+    })
+  ],
+
+  ...  rest of the original file here ...
+
+2) Create a file called build.js in the root folder 
+that will call the appropriate webpack config.
+
+// script the is used to make the production webpack bundle
+/* eslint-disable no-console */
+import webpack from 'webpack';
+import webpackConfig from '../webpack.config.prod';
+import chalk from 'chalk';
+
+// set an enviroment var to tell Babel and other tools
+// what the build type is
+process.env.NODE_ENV = 'production';
+
+console.log(chalk.blue('Generated minified bundle for Production. This will take a moment ...'))
+
+webpack(webpackConfig).run((err,stats) => {
+  if (err) {  // fatal error, so exit
+    console.log(chalk.red(err));
+    return 1;
+  }
+  // code to ensure better output is generated than default
+  const jsonStats = stats.toJson();
+  if (jsonStats.hasErrors) {
+    return jsonStats.errors.map(error => console.log(chalk.red(error)));
+  }
+  if (jsonStats.hasWarnings){
+    console.log(chalk.yellow('Webpack generated the following warnings: '));
+    jsonStats.warnings.map(warning => console.log(chalk.yellow(warning)));
+  }
+
+  console.log(`Webpack Stats: ${stats}`);
+
+  // if we got this far the build is complete
+  console.log(chalk.green('Your app has been build for prod and was written to /dist'));
+  
+  return 0;
+});
+
+// --- end of script  ---
+
+3) Create a dist environment to run a simulated prod build
+(this is useful for debugging prod problems on your local machine instead of server)
+
+Copy the srcServer.js file to distServer.js , remove references to 
+webpack, add gzip compression to show file sizes of files being sent out
+(a useful stat), and tell express to enable static file support
+so it can handle the webpack bundle that was created.
+
+// distServer file - used to run sample prod dist
+
+import express from 'express'; // web server
+import path from 'path';
+import open from 'open';
+import compression from 'compression'; // gzip compression
+
+const port = 3000;
+const app = express();
+
+app.use(compression());
+app.use(express.static('dist'));
+
+app.get('/', function(req, res) {
+  res.sendFile(path.join(__dirname, '../dist/index.html'));
+});
+
+// NOTE:  rest of the file is your web routing
+
+// allow console statements in this script
+/* eslint-disable no-console  */ 
+
+// pretend this is your production web server address
+app.get('/users',function(req,res) {
+  // hard coding for simplicity, pretend this hits a real database
+  res.json([
+    {"id": 1,"firstname":"Bob","lastname":"Smith","email":"bob@gmail.com"},
+    {"id": 2,"firstname":"Tammy","lastname":"Norton","email":"tnorton@gmail.com"},
+    {"id": 3,"firstname":"Tina","lastname":"Lee","email":"tina.lee@gmail.com"}   
+  ]);
+});
+
+app.listen(port, function(err) {
+  if (err) {
+    console.log (err);
+  } else {
+  open('http://localhost:' + port);
+  }
+});
+
+4) serve up some mock api calls for this dist
+
+Test this by  :   
+-----------------
+npm start -s
+The localhost:3000 website should show up, serving data from srcServer.js
+and you can test the parm commend by replacing the url with. 
+localhost:3000/?useMockApi=true
+
+  you should see different results.
+
+5) modify the package.json to add 4 build commands.
+
+  // - prebuild runs first, which in turn runs clean-dist that removes old
+  //   bundle file and makes a new dist folder
+  // - lint is run next
+  // - the build occurs 
+  // - and finally the dist server is started up to server the dist bundle.
+
+    "clean-dist": "rimraf ./dist && mkdir dist",  
+    "prebuild": "npm-run-all clean-dist test lint",  
+    "build": "babel-node buildScripts/build.js",  
+    "postbuid": "babel-node buildScipts/distServer.js"   
+
+  // when you type   npm run build -s ...
+
+6) You need to dynamically change some HTML code to handle
+    serving up a bundle from the web servere (which is looking for index.html not bundle.js)
+     - set up references to bundle 
+     - handle dynamic bundle names
+     - inject production only resources
+     - minify code
+
+   options include:
+    a) hard coding a script tag in your index.html file to handle bundnel...
+       <script src="bundle.js"></script>
+ *  b) to dynamically add code to page for prod
+       generate html via  node script to add code to replacee place holders
+ *  c) use html-webpack-plugin to do this
+
+decision:  Using webpack plugin  to Copy index.html from src to dist (instead of using node/cmd line)
+
+modify both webpack.config.prod.js and webpack.config.dev.js
+---------------------------------------------------
+    import HtmlWebpackPlugin from 'html-webpack-plugin';
+
+   // add the following to area plugins: [
+      
+      // Create HTML file that includes reference to bundled
+      // javascript, and minifies the html code.
+      new HtmlWebpackPlugin({
+        template: 'src/index.html',
+        minify: {
+          removeComments: true,
+          collapseWhitespace: true,
+          removeRedundantAttributes: true,
+          useShortDoctype: true,
+          removeEmptyAttributes: true,
+          useShortDoctype: true,
+          removeStyleLinkTypeAttributes: true,
+          keepClosingSlash: true,
+          minifyJS: true,
+          minifyCSS: true,
+          minifyURLs: true 
+        },
+        inject: true
+      }),
+
+  Actually do not need the minify options for the dev side.
+  Removed the hard coded <script> tag for bundle from src/index.html
+
+Bundle splitting
+==================
+When you apps get bigger, you might need to split the code up
+into smaller bundles for each client side page so they only have to
+load only what is neccessary for that page.
+
+Also, put shared libraries in a separate cache that doesn't 
+need to be uploaded again for each page.
+
+Configure webpack to do bundle splitting.
+--------------------------------
+
+in webpack.config.prod.js, modify the entry section to add 
+additional routes (so we have multiple pages to work with)
+
+replace this property...
+  entry: [path.resolve(__dirname, 'src/index')], 
+
+to become ...
+  entry: {
+    vendor: path.resolve(__dirname, 'src/vendor')
+    main: path.resolve(__dirname, 'src/index')
+  }
+
+And output parm needs to change from 
+  filename: 'bundle.js'
+
+to a variable placeholder that will be filled with vendor or main...
+  filename: '[name].js'
+
+And add src/vendor.js file
+
+// this file contains references to the vendor libraries
+// we are using in this project.  This is used by webpack
+// in the prod build only.  A separate bundle for vendor is
+// useful since it is unlikely to change as often as our app code.
+// All the libraries we reference will be written to vendor.js.
+// Any files not referenced will be bundled into main.js.
+
+/* eslint-disable no-unused-vars */
+// need above line because fetch var is never used below.
+
+import fetch from 'whatwg-fetch';
+// other filees to list include: jquery, angular, bootstrap, ...
+
+
+
+
+Cache busting  - prevent browser from having to reload bundles
+===================
+- set headers to cache http requests for up to a year.
+- force the browser to reload the cache when new version with new
+bundle name is available (by hashing the filename)
+
+solution:
+1) hash bundle filename dynamically
+2) generate html dynamically to inject the new bundle name
+
+webpack-md5-hash plugin is required 
+
+Modify webpack.config.prod.js
+-------------------------
+import WebpackMD5Hash from 'webpack-md5-hash';
+...
+   filename: '[name].[chunkhash].js'
+... 
+// and add the new webpack plugin ...
+
+ plugins: [
+      // Hash the files using MD5 so that the bundle names change
+      // when the content changes, forcing browser to realize it 
+      // needs to reload the cached library (code has changed)
+      new WebpackMD5Hash(),
+
+ Also if you want to pull out your css files out of the bundles
+ to a seperately cached css file, you can use the webpack ExtractTextPlugin
+
+ Modify webpack.config.prod.js
+ ----------------------------
+ import ExtractTextPlugin from 'extract-text-webpack-plugin';
+  ... 
+//  add the new webpack plugin ...
+
+     // Generate an external css file with a hash in the file name if css changes.
+      new ExtractTextPlugin('[name].[contenthash].css'),
+
+// and finally replace the styling command at the bottom of the config
+
+ module: {
+    rules: [
+      { test: /\.js$/, exclude: /node_modules/, loaders: ['babel-loader'] },
+      { test: /\.css$/, loaders: ['style-loader', 'css-loader'] }
+    ]
+  }
+ 
+ // with the following ...
+
+   module: {
+    rules: [
+      { test: /\.js$/, exclude: /node_modules/, loaders: ['babel-loader'] },
+      { test: /\.css$/, loader: ExtractTextPlugin.extract('css?sourceMap')}
+    ]
+  }
+
+   npm run build -s    // to test it out
+
+
+  Production Error logging  - for javascript errors
+   ========================================
+   Libraries that are main contenders in this area:
+   * TrackJS  - javascript only
+     Sentry 
+     New Relic - broader spectrum
+     Raygun
+
+   Features to look for in a logging module:
+     Good Error Metadata 
+        (browser used, stack trace, previous actions client took, provides custom api)
+     Notifications  (will email you when error detected)
+     Analytics and filtering (reduce the number of warnings/noise)
+     price (monthly cost)
+
+You can sign up for a 30 day trial of TrackJS
+Then paste the individual snippet of code they provide you in the <head> of your index.html
+<script type="test/javascript">window._trackJs = { token: 'your personal token here'};</script>
+// note: the above will not work, just giving you an example of what it is
+
+
+Dynamically embedding Production Specific code in index.html
+using embeddedjs
+==================================================
+Some html portions like the error logging above should only be running
+in production code, otherwise you would see dev error logging messages
+that you don't really care about.
+
+Use the HTMLwebpack template plugin module , which by default uses a template
+from   www.embeddedjs.com  if not specified (EJS - embedded javascript).
+
+Modify wepack.config.prod.js
+-----------------------------
+new HtmlWebpackPlugin({
+  ...
+},
+inject: true,
+// properties you define her are injected into the index.html file
+// using the htmlWebpackPlugin.options.varName
+trackJSToken: ' some special number you got from trackjs'
+  }),
+
+For more info about ejs visit  http://www.embeddedjs.com
+For examples of using it with htmlWebpackPlugin, see
+https://github.com/jaketrent/html-webpack-template/blob/master/index.ejs
+
+
+========================================================
+Automated Deploys
+------------------
+
+
+
+
+
+
+
+

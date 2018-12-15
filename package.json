@@ -25,8 +25,8 @@
     "clean-dist": "rimraf ./dist && mkdir dist",  
     "prebuild": "npm-run-all clean-dist test lint",  
     "build": "babel-node buildScripts/build.js",  
-    "postbuid": "babel-node buildScipts/distServer.js"   
-
+    "postbuid": "babel-node buildScipts/distServer.js",
+    "deploy": "surge ./dist"   
   },
   "author": "Terry Shuya - based on course by Cory House",
   "license": "MIT",
